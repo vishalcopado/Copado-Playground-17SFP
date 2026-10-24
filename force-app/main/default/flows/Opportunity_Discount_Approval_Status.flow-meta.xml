@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <assignments>
+        <name>Set_Approval_Status</name>
+        <label>Set Approval Status</label>
+        <locationX>176</locationX>
+        <locationY>287</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Discount_Approval_Status__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>ApprovalStatusForDiscount</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <description>Sets Discount Approval Status to Required (above 15%) or Not Required whenever the discount is entered or changed, so a changed discount must be re-approved.</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>ApprovalStatusForDiscount</name>
+        <dataType>String</dataType>
+        <expression>IF({!$Record.Discount_Percent__c} &gt; 15, &quot;Required&quot;, &quot;Not Required&quot;)</expression>
+    </formulas>
+    <interviewLabel>Opportunity Discount Approval Status {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Opportunity Discount Approval Status</label>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Set_Approval_Status</targetReference>
+        </connector>
+        <filterFormula>OR(ISNEW(), ISCHANGED({!$Record.Discount_Percent__c}))</filterFormula>
+        <object>Opportunity</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>
